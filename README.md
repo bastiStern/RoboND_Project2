@@ -63,7 +63,7 @@ self.dh_param = {self.alpha0:      0,      self.a0:     0,      self.d1:     0.7
 ```
 The derivation of the Transformation Matrices like shown in the image below
 ![alt text][image2]
-in the code of the class a staticmethod was used
+In the code of the class a staticmethod was used
 ```python 
 @staticmethod
 def transformation_matrix(alpha, a, d, q):
@@ -121,7 +121,9 @@ theta3 = pi/2 - beta - error
 #### Inverse Orientation
 Now that we have the first three angles we can continue to solve for theta4, theta5, theta6. 
 The Basic principle is shown in the image below.
+
 ![alt text][image4]
+
 To do so we need a partial rotation matrix called `self.R3_6`.
 ```python 
 R0_3 = self.T0_1[0:3,0:3] * self.T1_2[0:3,0:3] * self.T2_3[0:3,0:3]
