@@ -8,6 +8,8 @@
 [image3]: ./pics/abc.png
 [image4]: ./pics/euler.png
 [image5]: ./pics/law.png
+[image6]: ./pics/robot1.png
+[image7]: ./pics/robot2.png
 
 The main idea was to make the calculation of the joint angles theta1 to 6 more ressource effective. In order to achieve that i generated a class object named `InverseKinematicSolver`
 in the `IK_solver.py` file. This class is instantiated right before the for-loop in the`handle_calculate_IK()` function. So each time the for loop iterates over it's body it uses the method 
@@ -128,13 +130,17 @@ To do so we need a partial rotation matrix called `self.R3_6`.
 ```python 
 R0_3 = self.T0_1[0:3,0:3] * self.T1_2[0:3,0:3] * self.T2_3[0:3,0:3]
 R0_3 = R0_3.evalf(subs={self.q1: theta1, self.q2: theta2, self.q3: theta3})
-R3_6 = R0_3.inv('LU') * self.ROT_TCP
+R3_6 = R0_3.transpose() * self.ROT_TCP
 ```
 Now the angles can be extracted from the rotation matrix of the wrist.
 ```python 
-theta4 = atan2(R3_6[2,2], -R3_6[0,2])
 theta5 = atan2(sqrt(R3_6[0,2]*R3_6[0,2] + R3_6[2,2]*R3_6[2,2]), R3_6[1,2])
-theta6 = atan2(-R3_6[1,1], R3_6[1,0])
+if sin(theta5) < 0:
+	theta4 = atan2(-R3_6[2,2], R3_6[0,2])
+    theta6 = atan2(R3_6[1,1], -R3_6[1,0])
+else:	
+    theta4 = atan2(R3_6[2,2], -R3_6[0,2])
+    theta6 = atan2(-R3_6[1,1], R3_6[1,0])
 ```
 
 ### Project Implementation
@@ -171,6 +177,10 @@ Solver = InverseKinematicSolver()
 # solve for current position 
 theta1, theta2, theta3, theta4, theta5 , theta6 = Solver.calculate_angles(px, py, pz, roll, pitch, yaw)
 ```
+The final results with this implemation are 9/10 objects picked from the shelf and placed in the bucket.
+![alt text][image6]
+![alt text][image7]
+
 
 
 

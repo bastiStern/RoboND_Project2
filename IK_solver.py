@@ -80,12 +80,17 @@ class InverseKinematicSolver(object):
         # get partial rotation matrix
         R0_3 = self.T0_1[0:3,0:3] * self.T1_2[0:3,0:3] * self.T2_3[0:3,0:3]
         R0_3 = R0_3.evalf(subs={self.q1: theta1, self.q2: theta2, self.q3: theta3})
-        R3_6 = R0_3.inv('LU') * self.ROT_TCP
+        R3_6 = R0_3.transpose() * self.ROT_TCP
 
         # get the euler angles for the orientation of the wrist from the R3_6 rotation matrix
-        theta4 = atan2(R3_6[2,2], -R3_6[0,2])
         theta5 = atan2(sqrt(R3_6[0,2]*R3_6[0,2] + R3_6[2,2]*R3_6[2,2]), R3_6[1,2])
-        theta6 = atan2(-R3_6[1,1], R3_6[1,0])
+        if sin(theta5) < 0:
+        	theta4 = atan2(-R3_6[2,2], R3_6[0,2])
+	        theta6 = atan2(R3_6[1,1], -R3_6[1,0])
+        else:	
+	        theta4 = atan2(R3_6[2,2], -R3_6[0,2])
+	        theta6 = atan2(-R3_6[1,1], R3_6[1,0])
+
 
         return theta1, theta2, theta3, theta4, theta5, theta6
 

@@ -36,7 +36,7 @@ def handle_calculate_IK(req):
 
 		    # Extract end-effector position and orientation from request
 		    # px,py,pz = end-effector position
-		    px = req.poses[x].position.x
+            px = req.poses[x].position.x
             py = req.poses[x].position.y
             pz = req.poses[x].position.z
 
@@ -46,8 +46,9 @@ def handle_calculate_IK(req):
                     req.poses[x].orientation.z, req.poses[x].orientation.w])
 
             # calcuclate angles theta 1-6 with solver method and append
-		    joint_trajectory_point.positions = [Solver.calculate_angles(px, py, pz, roll, pitch, yaw)]
-		    joint_trajectory_list.append(joint_trajectory_point)
+            theta1, theta2, theta3, theta4, theta5, theta6 = Solver.calculate_angles(px, py, pz, roll, pitch, yaw)
+            joint_trajectory_point.positions = [theta1, theta2, theta3, theta4, theta5, theta6]
+            joint_trajectory_list.append(joint_trajectory_point)
 
         rospy.loginfo("length of Joint Trajectory List: %s" % len(joint_trajectory_list))
         return CalculateIKResponse(joint_trajectory_list)
